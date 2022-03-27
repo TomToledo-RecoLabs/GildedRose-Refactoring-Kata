@@ -24,6 +24,9 @@ func TestUpdateQuality(t *testing.T) {
 		{testname: "Aged Brie 0 40", in: []*Item{{name: "Aged Brie", sellIn: 0, quality: 40}}, want: []*Item{{name: "Aged Brie", sellIn: -1, quality: 42}}},
 		{testname: "Backstage passes to a TAFKAL80ETC concert 0 10", in: []*Item{{name: "Backstage passes to a TAFKAL80ETC concert", sellIn: 0, quality: 10}}, want: []*Item{{name: "Backstage passes to a TAFKAL80ETC concert", sellIn: -1, quality: 0}}},
 		{testname: "A 0 10", in: []*Item{{name: "A", sellIn: 0, quality: 10}}, want: []*Item{{name: "A", sellIn: -1, quality: 8}}},
+		{testname: "Conjured 0 10", in: []*Item{{name: "Conjured", sellIn: 0, quality: 10}}, want: []*Item{{name: "Conjured", sellIn: -1, quality: 6}}},
+		{testname: "Conjured 0 10", in: []*Item{{name: "Conjured", sellIn: 1, quality: 10}}, want: []*Item{{name: "Conjured", sellIn: 0, quality: 8}}},
+		{testname: "Conjured 0 10", in: []*Item{{name: "Conjured", sellIn: 0, quality: 2}}, want: []*Item{{name: "Conjured", sellIn: -1, quality: 0}}},
 	}
 
 	for testInd, tt := range tests {

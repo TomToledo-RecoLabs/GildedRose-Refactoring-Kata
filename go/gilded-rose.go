@@ -96,6 +96,18 @@ func (item *Item) agedBrieCase() error {
 	return nil
 }
 
+func (item *Item) conjuredCase() error {
+	item.addQuality(-2)
+	if item.SellIn() <= 0 {
+		item.addQuality(-2)
+	}
+	if item.Quality() < 0 {
+		item.resetQuality()
+	}
+	item.decSellIn()
+	return nil
+}
+
 func (item *Item) update() error {
 
 	switch item.Name() {
@@ -108,6 +120,9 @@ func (item *Item) update() error {
 
 	case "Sulfuras, Hand of Ragnaros":
 		return item.sulfurasCase()
+
+	case "Conjured":
+		return item.conjuredCase()
 
 	default:
 		return item.defaultCase()
