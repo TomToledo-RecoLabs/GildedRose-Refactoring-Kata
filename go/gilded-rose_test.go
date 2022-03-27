@@ -42,20 +42,21 @@ func TestUpdateQuality(t *testing.T) {
 	}
 }
 
-func TestAddQuality(t *testing.T) {
+func TestIncreaseQuality(t *testing.T) {
 	var tests = []struct {
 		testname string
 		in       *Item
 		change   int
 		want     error
 	}{
-		{testname: "A 1 1, addQuality -1", in: &Item{name: "A", sellIn: 1, quality: 1}, change: -1, want: fmt.Errorf("addQuality: val is negative, %v", -1)},
-		{testname: "A 1 1, addQuality 1", in: &Item{name: "A", sellIn: 1, quality: 1}, change: 1, want: nil},
+		{testname: "A 1 1, increaseQuality -1", in: &Item{name: "A", sellIn: 1, quality: 1}, change: -1, want: fmt.Errorf("increaseQuality: val is negative, %v", -1)},
+		{testname: "A 1 1, increaseQuality 1", in: &Item{name: "A", sellIn: 1, quality: 1}, change: 1, want: nil},
+		{testname: "A 1 50, increaseQuality 1", in: &Item{name: "A", sellIn: 1, quality: 50}, change: 1, want: nil},
 	}
 
 	for testInd, tt := range tests {
 		t.Run(tt.testname, func(t *testing.T) {
-			err := tt.in.addQuality(tt.change)
+			err := tt.in.increaseQuality(tt.change)
 			if !reflect.DeepEqual(err, tt.want) {
 				t.Errorf("test index:%v, got %v, want %v", testInd, err, tt.want)
 			}
@@ -63,20 +64,21 @@ func TestAddQuality(t *testing.T) {
 	}
 }
 
-func TestSubQuality(t *testing.T) {
+func TestDecreaseQuality(t *testing.T) {
 	var tests = []struct {
 		testname string
 		in       *Item
 		change   int
 		want     error
 	}{
-		{testname: "A 1 1, subQuality -1", in: &Item{name: "A", sellIn: 1, quality: 1}, change: -1, want: fmt.Errorf("subQuality: val is negative, %v", -1)},
-		{testname: "A 1 1, subQuality 1", in: &Item{name: "A", sellIn: 1, quality: 1}, change: 1, want: nil},
+		{testname: "A 1 1, decreaseQuality -1", in: &Item{name: "A", sellIn: 1, quality: 1}, change: -1, want: fmt.Errorf("decreaseQuality: val is negative, %v", -1)},
+		{testname: "A 1 1, decreaseQuality 1", in: &Item{name: "A", sellIn: 1, quality: 1}, change: 1, want: nil},
+		{testname: "A 1 0, decreaseQuality 1", in: &Item{name: "A", sellIn: 1, quality: 0}, change: 1, want: nil},
 	}
 
 	for testInd, tt := range tests {
 		t.Run(tt.testname, func(t *testing.T) {
-			err := tt.in.subQuality(tt.change)
+			err := tt.in.decreaseQuality(tt.change)
 			if !reflect.DeepEqual(err, tt.want) {
 				t.Errorf("test index:%v, got %v, want %v", testInd, err, tt.want)
 			}
@@ -84,20 +86,20 @@ func TestSubQuality(t *testing.T) {
 	}
 }
 
-func TestSubSellin(t *testing.T) {
+func TestDecreaseSellIn(t *testing.T) {
 	var tests = []struct {
 		testname string
 		in       *Item
 		change   int
 		want     error
 	}{
-		{testname: "A 1 1, subSellIn -1", in: &Item{name: "A", sellIn: 1, quality: 1}, change: -1, want: fmt.Errorf("subSellIn: val is negative, %v", -1)},
-		{testname: "A 1 1, subSellIn 1", in: &Item{name: "A", sellIn: 1, quality: 1}, change: 1, want: nil},
+		{testname: "A 1 1, decreaseSellIn -1", in: &Item{name: "A", sellIn: 1, quality: 1}, change: -1, want: fmt.Errorf("decreaseSellIn: val is negative, %v", -1)},
+		{testname: "A 1 1, decreaseSellIn 1", in: &Item{name: "A", sellIn: 1, quality: 1}, change: 1, want: nil},
 	}
 
 	for testInd, tt := range tests {
 		t.Run(tt.testname, func(t *testing.T) {
-			err := tt.in.subSellIn(tt.change)
+			err := tt.in.decreaseSellIn(tt.change)
 			if !reflect.DeepEqual(err, tt.want) {
 				t.Errorf("test index:%v, got %v, want %v", testInd, err, tt.want)
 			}

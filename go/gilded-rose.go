@@ -4,6 +4,13 @@ import (
 	"fmt"
 )
 
+const (
+	agedBrieName  = "Aged Brie"
+	backstageName = "Backstage passes to a TAFKAL80ETC concert"
+	sulfurasName  = "Sulfuras, Hand of Ragnaros"
+	conjuredName  = "Conjured"
+)
+
 type Item struct {
 	name            string
 	sellIn, quality int
@@ -13,34 +20,27 @@ func (item *Item) Name() string {
 	return item.name
 }
 
-func (item *Item) addQuality(val int) error {
+func (item *Item) increaseQuality(val int) error {
 	if val < 0 {
-		return fmt.Errorf("addQuality: val is negative, %v", val)
+		return fmt.Errorf("increaseQuality: val is negative, %v", val)
 	}
 
 	item.quality = item.quality + val
+	if item.quality > 50 {
+		item.quality = 50
+	}
 	return nil
 }
 
-func (item *Item) subQuality(val int) error {
+func (item *Item) decreaseQuality(val int) error {
 	if val < 0 {
-		return fmt.Errorf("subQuality: val is negative, %v", val)
+		return fmt.Errorf("decreaseQuality: val is negative, %v", val)
 	}
 
 	item.quality = item.quality - val
-	return nil
-}
-
-func (item *Item) incQuality() error {
-	return item.addQuality(1)
-}
-
-func (item *Item) decQuality() error {
-	return item.subQuality(1)
-}
-
-func (item *Item) resetQuality() error {
-	item.quality = 0
+	if item.quality < 0 {
+		item.quality = 0
+	}
 	return nil
 }
 
@@ -48,17 +48,13 @@ func (item *Item) Quality() int {
 	return item.quality
 }
 
-func (item *Item) subSellIn(val int) error {
+func (item *Item) decreaseSellIn(val int) error {
 	if val < 0 {
-		return fmt.Errorf("subSellIn: val is negative, %v", val)
+		return fmt.Errorf("decreaseSellIn: val is negative, %v", val)
 	}
 
 	item.sellIn = item.sellIn - val
 	return nil
-}
-
-func (item *Item) decSellIn() error {
-	return item.subSellIn(1)
 }
 
 func (item *Item) SellIn() int {
@@ -66,14 +62,14 @@ func (item *Item) SellIn() int {
 }
 
 func (item *Item) defaultCase() error {
-	if item.Quality() > 0 {
-		item.decQuality()
-		if item.SellIn() <= 0 && item.Quality() > 0 {
-			item.decQuality()
-		}
-	}
-	item.decSellIn()
+	item.decreaseSellIn(1)
 
+	if item.SellIn() < 0 {
+		item.decreaseQuality(2)
+		return nil
+	}
+
+	item.decreaseQuality(1)
 	return nil
 }
 
@@ -82,45 +78,48 @@ func (item *Item) sulfurasCase() error {
 }
 
 func (item *Item) backstageCase() error {
-	item.decSellIn()
+	item.decreaseSellIn(1)
 	if item.SellIn() < 0 {
-		item.resetQuality()
+		item.decreaseQuality(item.Quality())
 		return nil
 	}
 
-	if item.Quality() < 50 {
-		item.incQuality()
-		if item.SellIn() < 10 && item.Quality() < 50 {
-			item.incQuality()
-		}
-		if item.SellIn() < 5 && item.Quality() < 50 {
-			item.incQuality()
-		}
-	}
+	switch {
 
+	case item.SellIn() < 5:
+		item.increaseQuality(3)
+
+	case item.SellIn() < 10:
+		item.increaseQuality(2)
+
+	default:
+		item.increaseQuality(1)
+
+	}
 	return nil
 }
 
 func (item *Item) agedBrieCase() error {
-	if item.Quality() < 50 {
-		item.incQuality()
-		if item.SellIn() <= 0 && item.Quality() < 50 {
-			item.incQuality()
-		}
+	item.decreaseSellIn(1)
+
+	if item.SellIn() < 0 {
+		item.increaseQuality(2)
+		return nil
 	}
-	item.decSellIn()
+
+	item.increaseQuality(1)
 	return nil
 }
 
 func (item *Item) conjuredCase() error {
-	item.subQuality(2)
-	if item.SellIn() <= 0 {
-		item.subQuality(2)
+	item.decreaseSellIn(1)
+
+	if item.SellIn() < 0 {
+		item.decreaseQuality(4)
+		return nil
 	}
-	if item.Quality() < 0 {
-		item.resetQuality()
-	}
-	item.decSellIn()
+
+	item.decreaseQuality(2)
 	return nil
 }
 
@@ -128,19 +127,24 @@ func (item *Item) update() error {
 
 	switch item.Name() {
 
-	case "Aged Brie":
+	case agedBrieName:
+		fmt.Println("start handling", agedBrieName, "Case")
 		return item.agedBrieCase()
 
-	case "Backstage passes to a TAFKAL80ETC concert":
+	case backstageName:
+		fmt.Println("start handling", backstageName, "Case")
 		return item.backstageCase()
 
-	case "Sulfuras, Hand of Ragnaros":
+	case sulfurasName:
+		fmt.Println("start handling", sulfurasName, "Case")
 		return item.sulfurasCase()
 
-	case "Conjured":
+	case conjuredName:
+		fmt.Println("start handling", conjuredName, "Case")
 		return item.conjuredCase()
 
 	default:
+		fmt.Println("start handling default Case")
 		return item.defaultCase()
 
 	}
@@ -152,5 +156,4 @@ func UpdateQuality(items []*Item) {
 			fmt.Println("item", items[i], ",update Error", err.Error())
 		}
 	}
-
 }

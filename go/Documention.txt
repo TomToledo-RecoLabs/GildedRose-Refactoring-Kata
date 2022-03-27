@@ -18,3 +18,21 @@ The sellIn field will be decremented by 1, and in case of negative value, qualit
 
 Sulfuras, Hand of Ragnaros item -
 fields will remain
+
+
+Item Function:
+
+increaseQuality - 
+    Input: non negative number 
+    Output: nil in case of vaild input, error otherwise
+    Description: will increment the quality field by input number to maximum value of 50
+
+decreaseQuality - 
+    Input: non negative number 
+    Output: nil in case of vaild input, error otherwise
+    Description: will decrease the quality field by input number to minimum value of 0
+
+decreaseSellIn -
+    Input: non negative number 
+    Output: nil in case of vaild input, error otherwise
+    Description: will decrease the sellin field by input number
