@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 )
@@ -25,7 +26,7 @@ func TestUpdateQuality(t *testing.T) {
 		{testname: "Backstage passes to a TAFKAL80ETC concert 0 10", in: []*Item{{name: "Backstage passes to a TAFKAL80ETC concert", sellIn: 0, quality: 10}}, want: []*Item{{name: "Backstage passes to a TAFKAL80ETC concert", sellIn: -1, quality: 0}}},
 		{testname: "A 0 10", in: []*Item{{name: "A", sellIn: 0, quality: 10}}, want: []*Item{{name: "A", sellIn: -1, quality: 8}}},
 		{testname: "Conjured 0 10", in: []*Item{{name: "Conjured", sellIn: 0, quality: 10}}, want: []*Item{{name: "Conjured", sellIn: -1, quality: 6}}},
-		{testname: "Conjured 0 10", in: []*Item{{name: "Conjured", sellIn: 1, quality: 10}}, want: []*Item{{name: "Conjured", sellIn: 0, quality: 8}}},
+		{testname: "Conjured 1 10", in: []*Item{{name: "Conjured", sellIn: 1, quality: 10}}, want: []*Item{{name: "Conjured", sellIn: 0, quality: 8}}},
 		{testname: "Conjured 0 10", in: []*Item{{name: "Conjured", sellIn: 0, quality: 2}}, want: []*Item{{name: "Conjured", sellIn: -1, quality: 0}}},
 	}
 
@@ -36,6 +37,69 @@ func TestUpdateQuality(t *testing.T) {
 				if !reflect.DeepEqual(tt.in[i], tt.want[i]) {
 					t.Errorf("test index:%v, got %v, want %v", testInd, tt.in[i], tt.want[i])
 				}
+			}
+		})
+	}
+}
+
+func TestAddQuality(t *testing.T) {
+	var tests = []struct {
+		testname string
+		in       *Item
+		change   int
+		want     error
+	}{
+		{testname: "A 1 1, addQuality -1", in: &Item{name: "A", sellIn: 1, quality: 1}, change: -1, want: fmt.Errorf("addQuality: val is negative, %v", -1)},
+		{testname: "A 1 1, addQuality 1", in: &Item{name: "A", sellIn: 1, quality: 1}, change: 1, want: nil},
+	}
+
+	for testInd, tt := range tests {
+		t.Run(tt.testname, func(t *testing.T) {
+			err := tt.in.addQuality(tt.change)
+			if !reflect.DeepEqual(err, tt.want) {
+				t.Errorf("test index:%v, got %v, want %v", testInd, err, tt.want)
+			}
+		})
+	}
+}
+
+func TestSubQuality(t *testing.T) {
+	var tests = []struct {
+		testname string
+		in       *Item
+		change   int
+		want     error
+	}{
+		{testname: "A 1 1, subQuality -1", in: &Item{name: "A", sellIn: 1, quality: 1}, change: -1, want: fmt.Errorf("subQuality: val is negative, %v", -1)},
+		{testname: "A 1 1, subQuality 1", in: &Item{name: "A", sellIn: 1, quality: 1}, change: 1, want: nil},
+	}
+
+	for testInd, tt := range tests {
+		t.Run(tt.testname, func(t *testing.T) {
+			err := tt.in.subQuality(tt.change)
+			if !reflect.DeepEqual(err, tt.want) {
+				t.Errorf("test index:%v, got %v, want %v", testInd, err, tt.want)
+			}
+		})
+	}
+}
+
+func TestSubSellin(t *testing.T) {
+	var tests = []struct {
+		testname string
+		in       *Item
+		change   int
+		want     error
+	}{
+		{testname: "A 1 1, subSellIn -1", in: &Item{name: "A", sellIn: 1, quality: 1}, change: -1, want: fmt.Errorf("subSellIn: val is negative, %v", -1)},
+		{testname: "A 1 1, subSellIn 1", in: &Item{name: "A", sellIn: 1, quality: 1}, change: 1, want: nil},
+	}
+
+	for testInd, tt := range tests {
+		t.Run(tt.testname, func(t *testing.T) {
+			err := tt.in.subSellIn(tt.change)
+			if !reflect.DeepEqual(err, tt.want) {
+				t.Errorf("test index:%v, got %v, want %v", testInd, err, tt.want)
 			}
 		})
 	}

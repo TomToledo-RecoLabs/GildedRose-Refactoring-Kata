@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Item struct {
 	name            string
@@ -11,38 +13,52 @@ func (item *Item) Name() string {
 	return item.name
 }
 
-func (item *Item) addQuality(val int) bool {
+func (item *Item) addQuality(val int) error {
+	if val < 0 {
+		return fmt.Errorf("addQuality: val is negative, %v", val)
+	}
+
 	item.quality = item.quality + val
-	return true
+	return nil
 }
 
-func (item *Item) incQuality() bool {
-	item.addQuality(1)
-	return true
+func (item *Item) subQuality(val int) error {
+	if val < 0 {
+		return fmt.Errorf("subQuality: val is negative, %v", val)
+	}
+
+	item.quality = item.quality - val
+	return nil
 }
 
-func (item *Item) decQuality() bool {
-	item.addQuality(-1)
-	return true
+func (item *Item) incQuality() error {
+	return item.addQuality(1)
 }
 
-func (item *Item) resetQuality() bool {
+func (item *Item) decQuality() error {
+	return item.subQuality(1)
+}
+
+func (item *Item) resetQuality() error {
 	item.quality = 0
-	return true
+	return nil
 }
 
 func (item *Item) Quality() int {
 	return item.quality
 }
 
-func (item *Item) addSellIn(val int) bool {
-	item.sellIn = item.sellIn + val
-	return true
+func (item *Item) subSellIn(val int) error {
+	if val < 0 {
+		return fmt.Errorf("subSellIn: val is negative, %v", val)
+	}
+
+	item.sellIn = item.sellIn - val
+	return nil
 }
 
-func (item *Item) decSellIn() bool {
-	item.addSellIn(-1)
-	return true
+func (item *Item) decSellIn() error {
+	return item.subSellIn(1)
 }
 
 func (item *Item) SellIn() int {
@@ -97,9 +113,9 @@ func (item *Item) agedBrieCase() error {
 }
 
 func (item *Item) conjuredCase() error {
-	item.addQuality(-2)
+	item.subQuality(2)
 	if item.SellIn() <= 0 {
-		item.addQuality(-2)
+		item.subQuality(2)
 	}
 	if item.Quality() < 0 {
 		item.resetQuality()
