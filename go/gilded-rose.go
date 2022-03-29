@@ -22,7 +22,7 @@ func (item *Item) Name() string {
 
 func (item *Item) increaseQuality(val int) error {
 	if val < 0 {
-		return fmt.Errorf("increaseQuality: val is negative, %v", val)
+		return fmt.Errorf("increaseQuality: val is negative, %d", val)
 	}
 
 	item.quality = item.quality + val
@@ -62,15 +62,16 @@ func (item *Item) SellIn() int {
 }
 
 func (item *Item) defaultCase() error {
-	item.decreaseSellIn(1)
-
-	if item.SellIn() < 0 {
-		item.decreaseQuality(2)
-		return nil
+	err := item.decreaseSellIn(1)
+	if err != nil {
+		return err
 	}
 
-	item.decreaseQuality(1)
-	return nil
+	if item.SellIn() < 0 {
+		return item.decreaseQuality(2)
+	}
+
+	return item.decreaseQuality(1)
 }
 
 func (item *Item) sulfurasCase() error {
@@ -78,53 +79,55 @@ func (item *Item) sulfurasCase() error {
 }
 
 func (item *Item) backstageCase() error {
-	item.decreaseSellIn(1)
+	err := item.decreaseSellIn(1)
+	if err != nil {
+		return err
+	}
 	if item.SellIn() < 0 {
-		item.decreaseQuality(item.Quality())
-		return nil
+		return item.decreaseQuality(item.Quality())
 	}
 
 	switch {
 
 	case item.SellIn() < 5:
-		item.increaseQuality(3)
+		return item.increaseQuality(3)
 
 	case item.SellIn() < 10:
-		item.increaseQuality(2)
+		return item.increaseQuality(2)
 
 	default:
-		item.increaseQuality(1)
+		return item.increaseQuality(1)
 
 	}
-	return nil
 }
 
 func (item *Item) agedBrieCase() error {
-	item.decreaseSellIn(1)
-
-	if item.SellIn() < 0 {
-		item.increaseQuality(2)
-		return nil
+	err := item.decreaseSellIn(1)
+	if err != nil {
+		return err
 	}
 
-	item.increaseQuality(1)
-	return nil
+	if item.SellIn() < 0 {
+		return item.increaseQuality(2)
+	}
+
+	return item.increaseQuality(1)
 }
 
 func (item *Item) conjuredCase() error {
-	item.decreaseSellIn(1)
-
-	if item.SellIn() < 0 {
-		item.decreaseQuality(4)
-		return nil
+	err := item.decreaseSellIn(1)
+	if err != nil {
+		return err
 	}
 
-	item.decreaseQuality(2)
-	return nil
+	if item.SellIn() < 0 {
+		return item.decreaseQuality(4)
+	}
+
+	return item.decreaseQuality(2)
 }
 
 func (item *Item) update() error {
-
 	switch item.Name() {
 
 	case agedBrieName:
@@ -146,7 +149,6 @@ func (item *Item) update() error {
 	default:
 		fmt.Println("start handling default Case")
 		return item.defaultCase()
-
 	}
 }
 
