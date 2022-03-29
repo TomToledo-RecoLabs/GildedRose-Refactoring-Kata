@@ -1,0 +1,38 @@
+UpdateQuality function
+
+Input: slice of *Item object
+Output: no return value
+Description:
+The UpdateQuality function will updates the Items fields.
+The sellIn field will be decremented by 1.
+if quality > 0 and sellin < 0, quality will be decremented by 2, else if quality > 0, quality will be decremented by 1. The quality will be decremented until it reaches a minimum value of zero.
+
+Special cases of items:
+Aged Brie item - 
+The sellIn field will be decremented by 1.
+if quality < 50 and sellin < 0, quality will be incremented by 2, else if quality < 50, quality will be incremented by 1. The quality will be incremented up to a maximum value of 50 quality.
+
+Backstage passes to a TAFKAL80ETC concert item -
+if quality < 50 and sellin < 6, quality will be incremented by 3, else if quality < 50 and 5 < sellin < 11, quality will be incremented by 2, else if quality < 50, quality will be incremented by 1. The quality will be incremented up to a maximum value of 50 quality.
+The sellIn field will be decremented by 1, and in case of negative value, quality will be set to zero.
+
+Sulfuras, Hand of Ragnaros item -
+fields will remain
+
+
+Item Function:
+
+increaseQuality - 
+    Input: non negative number 
+    Output: nil in case of vaild input, error otherwise
+    Description: will increment the quality field by input number to maximum value of 50
+
+decreaseQuality - 
+    Input: non negative number 
+    Output: nil in case of vaild input, error otherwise
+    Description: will decrease the quality field by input number to minimum value of 0
+
+decreaseSellIn -
+    Input: non negative number 
+    Output: nil in case of vaild input, error otherwise
+    Description: will decrease the sellin field by input number
